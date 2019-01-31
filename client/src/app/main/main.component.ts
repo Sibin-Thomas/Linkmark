@@ -1,0 +1,96 @@
+import { Component, OnInit } from '@angular/core';
+import {CurrentbookmarksService} from '../currentbookmarks.service';
+import {Subscription} from 'rxjs';
+import {HttpClient} from '@angular/common/http'
+
+@Component({
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.css']
+})
+export class MainComponent implements OnInit {
+
+	username:string;
+  password:string;
+	noOfBookmarks:number;
+  loginVisibility:boolean;  
+	subscription:Subscription;
+
+  	constructor(private bookmarkservice : CurrentbookmarksService, private http: HttpClient) { 
+  		this.username = "NewUser";
+  		this.noOfBookmarks = 0;
+      this.showLoginDetails();
+  		this.bookmarkservice.getBookmark().subscribe(bookmark =>this.noOfBookmarks=this.noOfBookmarks+1);
+      this.http.get('http://localhost:8000/getActiveUser',{responseType: 'text'})
+                    .subscribe((response)=>{
+                      if (response != 'No Active User'){
+                          this.hideLoginDetails();
+                          this.username = response;
+                      }});
+  	}	
+
+  	ngOnDestroy(){
+  		this.subscription.unsubscribe();
+  	}
+
+
+  	ngOnInit() {
+      
+  	}
+
+    showLoginDetails(){
+      this.loginVisibility = true;      
+    }
+
+    hideLoginDetails(){
+      this.loginVisibility = false;   
+    }
+
+    sendAuth(username:string,password:string){
+      this.http.post('http://localhost:8000/auth',{"name":username,"pass":password},{responseType: 'text'})
+      .subscribe((response)=>{
+        console.log(response);
+        if (response == 'Yes'){
+            this.hideLoginDetails();
+            this.username = username;
+            this.http.post('http://localhost:8000/activateUser',{"name":username})
+            .subscribe((response)=>{
+              console.log(response);
+            });
+        }
+      },(err)=>console.log(err));
+    }
+
+    addUser(username:string,password:string){
+      var userExist:string;
+      userExist = 'true';
+      this.http.post('http://localhost:8000/doesUserExist',{"name":username},{responseType: 'text'})
+      .subscribe((response)=>{
+          console.log('Response '+response);
+          if (response == 'No')
+            userExist = 'false';
+          else
+            userExist = 'true'; 
+          if (userExist == 'false'){
+                console.log('enteredss')
+                  this.http.post('http://localhost:8000/addUser',{"name":username,"pass":password,"status":'active'},{responseType: 'text'})
+                    .subscribe((response)=>{
+                      if (response == 'User added'){
+                          this.hideLoginDetails();
+                          this.username = username;
+                      }
+            });
+      }           
+      });
+    }
+
+    logUserOut(){
+      console.log('entered');
+      this.http.post('http://localhost:8000/logUserOut',{"name":this.username})
+      .subscribe((user)=>{
+        console.log(user)});
+        this.username = "NewUser";
+        this.showLoginDetails();
+    }
+
+}

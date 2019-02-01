@@ -15,7 +15,19 @@ export class BookmarksComponent implements OnInit {
 	faltu:string;
 	constructor(private http: HttpClient, private bookmarkservice: CurrentbookmarksService, private usernameservice: UsernameService) {
 		this.bookmarks = [];
-		this.usernameservice.getUsername().subscribe(username => this.currentUser = username);
+		this.usernameservice.getUsername().subscribe(username => {
+			this.currentUser = username;
+			this.http.post('http://localhost:8000/bookmark/showBookmark',{'user':username})
+				.subscribe((response)=>{
+					console.log('sibin')
+						for(var i; i < Object.keys(response).length;i++){
+							this.bookmarks.push(response[i].bookmarkUrl,response[i].bookmarkName,response[i].username);
+							console.log(Object.keys(response).length);
+						}
+					}
+				);
+			}
+		);
 	}
 
 	addBookmark(bookmark:string){

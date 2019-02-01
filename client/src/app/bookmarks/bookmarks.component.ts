@@ -18,7 +18,7 @@ export class BookmarksComponent implements OnInit {
 		this.bookmarkservice.sendBookmark(bookmark);
 		var temp = bookmark.split("/")[2];
 		console.log(temp);
-		this.bookmarks.push(new Bookmark(bookmark,temp));
+		this.bookmarks.push(new Bookmark(bookmark,temp,""));
 	}
 
 	ngOnInit() {

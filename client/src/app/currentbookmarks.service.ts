@@ -10,7 +10,6 @@ export class CurrentbookmarksService {
   
   sendBookmark(bookmark:string){
   	this.subject.next(bookmark);
-  	console.log('service called');
   }
   
   clearBookmark(){

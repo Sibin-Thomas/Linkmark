@@ -21,7 +21,7 @@ export class MainComponent implements OnInit {
   		this.noOfBookmarks = 0;
       this.showLoginDetails();
   		this.bookmarkservice.getBookmark().subscribe(bookmark =>this.noOfBookmarks=this.noOfBookmarks+1);
-      this.http.get('http://localhost:8000/getActiveUser',{responseType: 'text'})
+      this.http.get('http://localhost:8000/user/getActiveUser',{responseType: 'text'})
                     .subscribe((response)=>{
                       if (response != 'No Active User'){
                           this.hideLoginDetails();
@@ -47,13 +47,13 @@ export class MainComponent implements OnInit {
     }
 
     sendAuth(username:string,password:string){
-      this.http.post('http://localhost:8000/auth',{"name":username,"pass":password},{responseType: 'text'})
+      this.http.post('http://localhost:8000/user/auth',{"name":username,"pass":password},{responseType: 'text'})
       .subscribe((response)=>{
         console.log(response);
         if (response == 'Yes'){
             this.hideLoginDetails();
             this.username = username;
-            this.http.post('http://localhost:8000/activateUser',{"name":username})
+            this.http.post('http://localhost:8000/user/activateUser',{"name":username})
             .subscribe((response)=>{
               console.log(response);
             });
@@ -64,7 +64,7 @@ export class MainComponent implements OnInit {
     addUser(username:string,password:string){
       var userExist:string;
       userExist = 'true';
-      this.http.post('http://localhost:8000/doesUserExist',{"name":username},{responseType: 'text'})
+      this.http.post('http://localhost:8000/user/doesUserExist',{"name":username},{responseType: 'text'})
       .subscribe((response)=>{
           console.log('Response '+response);
           if (response == 'No')
@@ -73,7 +73,7 @@ export class MainComponent implements OnInit {
             userExist = 'true'; 
           if (userExist == 'false'){
                 console.log('enteredss')
-                  this.http.post('http://localhost:8000/addUser',{"name":username,"pass":password,"status":'active'},{responseType: 'text'})
+                  this.http.post('http://localhost:8000/user/addUser',{"name":username,"pass":password,"status":'active'},{responseType: 'text'})
                     .subscribe((response)=>{
                       if (response == 'User added'){
                           this.hideLoginDetails();
@@ -86,7 +86,7 @@ export class MainComponent implements OnInit {
 
     logUserOut(){
       console.log('entered');
-      this.http.post('http://localhost:8000/logUserOut',{"name":this.username})
+      this.http.post('http://localhost:8000/user/logUserOut',{"name":this.username})
       .subscribe((user)=>{
         console.log(user)});
         this.username = "NewUser";

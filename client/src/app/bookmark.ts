@@ -1,5 +1,5 @@
 export class Bookmark {
-	constructor(public url:string, public name:string){
+	constructor(public bookmarkUrl:string, public bookmarkName:string, public username:string){
 
 	}
 }

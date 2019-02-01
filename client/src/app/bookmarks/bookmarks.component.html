@@ -1,7 +1,7 @@
 <div class="container w-50 bg-secondary rounded">
 	<div class="d-flex p-2">
 		<input #bookmarkField type="text" class="form-control" placeholder="Enter Bookmark">
-		<button class="btn-success ml-2" (click)="addBookmark(bookmarkField.value)">Add</button>
+		<button class="btn-success ml-2" (click)="addBookmark(bookmarkField.value);bookmarkField.value='';">Add</button>
 	</div>	
 	<ul style="list-style-type: none;padding: 0">
 		<li *ngFor="let bookmark of bookmarks;index as i">

@@ -94,6 +94,7 @@ export class MainComponent implements OnInit {
       .subscribe((user)=>{
         console.log(user)});
         this.username = "NewUser";
+        this.usernameservice.broadcastUsername(this.username);
         this.showLoginDetails();
     }
 

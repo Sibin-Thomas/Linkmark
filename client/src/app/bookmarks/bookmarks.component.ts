@@ -16,15 +16,17 @@ export class BookmarksComponent implements OnInit {
 	constructor(private http: HttpClient, private bookmarkservice: CurrentbookmarksService, private usernameservice: UsernameService) {
 		this.bookmarks = [];
 		this.usernameservice.getUsername().subscribe(username => {
+			console.log('username service get');
 			this.currentUser = username;
 			this.http.post('http://localhost:8000/bookmark/showBookmark',{'user':username})
 				.subscribe((response)=>{
-					console.log('sibin')
-						for(var i; i < Object.keys(response).length;i++){
-							this.bookmarks.push(response[i].bookmarkUrl,response[i].bookmarkName,response[i].username);
-							console.log(Object.keys(response).length);
-						}
+					this.bookmarks = [];
+					var len = Object.keys(response).length;
+					for(var i = 0; i < len; i++)
+						this.bookmarks.push(new Bookmark(response[i].bookmarkUrl,response[i].bookmarkName,response[i].username));
+					this.bookmarkservice.sendBookmark(this.bookmarks);
 					}
+
 				);
 			}
 		);

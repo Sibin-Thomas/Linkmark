@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import {Observable,Subject} from 'rxjs';
+import {Bookmark} from './bookmark';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CurrentbookmarksService {
 
-  private subject = new Subject<string>();
+  private subject = new Subject<Bookmark[]>();
   
-  sendBookmark(bookmark:string){
+  sendBookmark(bookmark:Bookmark[]){
   	this.subject.next(bookmark);
   }
   
@@ -16,7 +17,7 @@ export class CurrentbookmarksService {
   	this.subject.next();
   }
 
-  getBookmark():Observable<string>{
+  getBookmark():Observable<Bookmark[]>{
   	return this.subject.asObservable();
   }
 

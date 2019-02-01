@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {CurrentbookmarksService} from '../currentbookmarks.service';
 import {Subscription} from 'rxjs';
 import {HttpClient} from '@angular/common/http'
+import {UsernameService} from '../username.service';
 
 @Component({
   selector: 'app-main',
@@ -16,16 +17,17 @@ export class MainComponent implements OnInit {
   loginVisibility:boolean;  
 	subscription:Subscription;
 
-  	constructor(private bookmarkservice : CurrentbookmarksService, private http: HttpClient) { 
+  	constructor(private bookmarkservice : CurrentbookmarksService, private http: HttpClient, private usernameservice: UsernameService) { 
   		this.username = "NewUser";
   		this.noOfBookmarks = 0;
       this.showLoginDetails();
-  		this.bookmarkservice.getBookmark().subscribe(bookmark =>this.noOfBookmarks=this.noOfBookmarks+1);
+  		this.bookmarkservice.getBookmark().subscribe(bookmark =>this.noOfBookmarks=bookmark.length);
       this.http.get('http://localhost:8000/user/getActiveUser',{responseType: 'text'})
                     .subscribe((response)=>{
                       if (response != 'No Active User'){
                           this.hideLoginDetails();
                           this.username = response;
+                          this.usernameservice.broadcastUsername(this.username);
                       }});
   	}	
 
@@ -53,6 +55,7 @@ export class MainComponent implements OnInit {
         if (response == 'Yes'){
             this.hideLoginDetails();
             this.username = username;
+            this.usernameservice.broadcastUsername(this.username);
             this.http.post('http://localhost:8000/user/activateUser',{"name":username})
             .subscribe((response)=>{
               console.log(response);
@@ -78,6 +81,7 @@ export class MainComponent implements OnInit {
                       if (response == 'User added'){
                           this.hideLoginDetails();
                           this.username = username;
+                          this.usernameservice.broadcastUsername(this.username);
                       }
             });
       }           
